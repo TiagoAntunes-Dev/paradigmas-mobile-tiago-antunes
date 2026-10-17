@@ -1,9 +1,11 @@
+import React from "react";
 import { Text, View, StyleSheet } from "react-native";
+import { colors }  from "@/styles/colors";
 
-export default function Index() {
+export default function Edit() {
   return (
     <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
+      <Text style={{ color: colors.white }}>Edit this screen.</Text>
     </View>
   );
 }
