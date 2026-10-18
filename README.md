@@ -156,115 +156,112 @@ Os testes foram exploratórios: usei cada aplicativo em dispositivos diferentes,
 
 | Teste | Resultado observado | Ponto da fundamentação |
 | --- | --- | --- |
-| Offline | Uma temporada inteira foi simulada em modo avião; avançar para a temporada seguinte falhou | Rede instável ou ausente |
+| Offline | A temporada em andamento continuou sem conexão; avançar para a seguinte falhou | Rede instável ou ausente |
 | Segundo plano | A carreira continuou após alternar para o YouTube | Ciclo de vida |
-| Fechar e reabrir a guia | A carreira foi recuperada | Ciclo de vida e persistência |
-| Usabilidade no celular | Carreira confortável; criação do jogador difícil por causa do teclado virtual | Entrada e interação |
-| Celular x laptop | A classificação aparece reduzida no celular e completa (20 times) no laptop | UX e telas |
+| Fechar e reabrir a aba | A carreira foi recuperada | Ciclo de vida e persistência |
+| Usabilidade no celular | Carreira confortável; criação do jogador prejudicada por rolagem e teclado virtual | Entrada e interação |
+| Orientação da tela | [PREENCHER: o que observei na tela horizontal] | Restrições do dispositivo |
+| Celular x laptop | A classificação aparece reduzida no celular e completa (20 times) no laptop | UX e adaptação de tela |
 
-<details>
-<summary><strong>Teste 1: funcionamento offline</strong></summary>
+<details open>
+<summary><strong>Teste 1: funcionamento sem conexão</strong></summary>
 
 <br>
 
-**Procedimento.** Iniciei uma carreira com internet e, no começo da temporada, ativei o modo avião e continuei jogando.
+**Procedimento.** Iniciei uma carreira com o site conectado, ativei o modo avião do celular e continuei usando o jogo.
 
-**Observado.** Consegui simular uma temporada inteira sem conexão. Ao tentar avançar para a temporada seguinte, o navegador exibiu a tela do dinossauro e o carregamento não continuou. Desativei o modo avião **sem fechar a guia** e a temporada seguinte carregou normalmente.
+**Observado.** Na temporada em andamento, consegui continuar simulando as partidas normalmente, mesmo sem conexão. Ao tentar avançar para a temporada seguinte, o navegador exibiu a página de erro conhecida como "dinossauro do Chrome". Para saber se seria preciso reiniciar o jogo, desativei o modo avião **sem fechar a aba**. Com a conexão restabelecida, consegui avançar para a próxima temporada.
 
 ```mermaid
 flowchart TD
     A["Carreira iniciada online"] --> B["Modo avião ativado"]
     B --> C["Temporada simulada sem conexão (funcionou)"]
     C --> D["Tentativa de avançar de temporada"]
-    D --> E["Tela do dinossauro (falhou)"]
-    E --> F["Modo avião desativado, mesma guia"]
+    D --> E["Página do dinossauro (falhou)"]
+    E --> F["Modo avião desativado, mesma aba"]
     F --> G["Temporada seguinte carrega (funcionou)"]
 ```
 
-**Análise.** **Hipótese:** parte da experiência continua funcionando sem rede, mas a transição entre temporadas depende de alguma operação que não se completou offline. Não consegui determinar se foi uma requisição ao servidor, o carregamento de algum recurso ou outro motivo. O teste mostra que uma aplicação web pode manter funções disponíveis sem conexão sem estar preparada para funcionar offline por inteiro.
+**Análise.** O teste indica que algumas funções da temporada em andamento continuam disponíveis sem conexão, mas a transição para a temporada seguinte parece depender de uma operação que exige internet (**hipótese**: não foi possível determinar qual processo causou o erro). A experiência offline é, portanto, parcial: algumas ações funcionam e outras não. Para o usuário, seria melhor que o jogo informasse o que está disponível offline e mostrasse uma mensagem específica quando uma ação exigir conexão, em vez da página de erro do navegador.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/thefenomeno-offline-temporada.png" alt="TheFenomeno com modo avião ativado, temporada funcionando" width="240"><br><sub>Temporada funcionando em modo avião</sub></td>
-    <td align="center"><img src="docs/apps/thefenomeno-offline-erro.png" alt="Tela do dinossauro ao tentar avançar de temporada" width="240"><br><sub>Falha ao avançar para a temporada seguinte</sub></td>
+    <td align="center"><img src="docs/apps/laptop/thefenomeno-offline-temporada.png" alt="TheFenomeno com a temporada funcionando sem conexão" width="400"><br><sub>Temporada funcionando sem conexão</sub></td>
   </tr>
 </table>
 
 </details>
 
-<details>
+<details open>
 <summary><strong>Teste 2: segundo plano</strong></summary>
 
 <br>
 
-**Procedimento.** Iniciei uma carreira no navegador do celular, saí para usar o YouTube por alguns minutos e voltei.
+**Procedimento.** Iniciei uma carreira pelo navegador do celular, alternei para o aplicativo do YouTube por alguns minutos e voltei à aba do jogo.
 
-**Observado.** A carreira continuou de onde estava, sem recomeçar.
+**Observado.** A carreira continuava no estado esperado, sem que eu precisasse começar de novo.
 
-**Análise.** O contexto necessário foi mantido durante a alternância de aplicativos, o que favorece o uso no celular. **Limite do teste:** ele não prova que o jogo permanece ativo em qualquer situação, já que o sistema operacional pode suspender ou encerrar processos para liberar memória e bateria.
-
-</details>
-
-<details>
-<summary><strong>Teste 3: persistência após fechar a guia</strong></summary>
-
-<br>
-
-**Procedimento.** Com uma carreira iniciada no Chrome do celular, fechei a guia e abri o site de novo.
-
-**Observado.** A carreira foi recuperada sem recomeçar.
-
-**Análise.** As informações necessárias ficaram disponíveis depois do fechamento da guia, o que é diferente de apenas manter a página viva em segundo plano. **Limite do teste:** não identifiquei onde os dados são guardados, nem se o progresso sobreviveria à limpeza dos dados do navegador.
+**Análise.** Nesse teste, a troca temporária de aplicativos não interrompeu a experiência. Isso é importante no celular, onde o usuário costuma alternar entre vários aplicativos. **Limite do teste:** ele não permite afirmar que o jogo sempre manterá o estado. O comportamento pode variar conforme o navegador, a memória disponível e o gerenciamento de processos do sistema operacional.
 
 </details>
 
-<details>
-<summary><strong>Teste 4: usabilidade no celular</strong></summary>
+<details open>
+<summary><strong>Teste 3: persistência após fechar a aba</strong></summary>
 
 <br>
 
-**Procedimento.** Usei o jogo no navegador do celular durante a criação do jogador e durante a carreira.
+**Procedimento.** Depois de iniciar uma carreira, fechei a aba do jogo no Chrome e abri o site novamente mais tarde.
 
-**Observado.** A carreira foi tranquila, principalmente na orientação vertical, porque há poucos elementos para interagir. A criação do jogador foi mais difícil: são vários campos (nome, nacionalidade, número da camisa, posição e modo de jogo), o teclado virtual atrapalha e é preciso rolar bastante a tela.
+**Observado.** A carreira estava disponível e continuei de onde havia parado.
 
-**Análise.** A usabilidade não depende só do tamanho da tela, mas do tipo de interação pedida em cada etapa. A rolagem longa não é um problema em si, pois há muitas opções a apresentar. **Melhoria possível:** dividir a criação do jogador em etapas ou reposicionar os campos para facilitar o uso com o teclado virtual.
+**Análise.** O progresso foi preservado mesmo com o fechamento da aba, o que reduz o risco de o usuário perder o que fez ao encerrar a página. **Limite do teste:** não consigo dizer como os dados são armazenados, nem se a sessão é recuperada em qualquer situação. Para confirmar, seriam necessários testes adicionais, como limpar os dados do navegador ou acessar o jogo em outro dispositivo.
+
+</details>
+
+<details open>
+<summary><strong>Teste 4: usabilidade e orientação no celular</strong></summary>
+
+<br>
+
+**Observado.** No celular, a tela da carreira ofereceu uma experiência relativamente confortável na orientação vertical: as ações para acompanhar a carreira são acessíveis e a navegação é adequada ao uso móvel. A criação do jogador foi menos confortável. O formulário pede várias informações (nome, nacionalidade, número, posição e opções do modo de jogo), e por isso é preciso percorrer boa parte da tela. O teclado virtual também atrapalha, porque ocupa parte do espaço e pode dificultar a visualização dos campos durante o preenchimento.
+
+**Orientação da tela.** [PREENCHER: o que observei com o celular na horizontal.]
+
+**Análise.** A quantidade de configurações se justifica pela complexidade de criar um jogador, mas a experiência poderia melhorar com um melhor gerenciamento do teclado, campos organizados em etapas e o campo selecionado aparecendo automaticamente na área visível. Isso reduziria a rolagem e deixaria o preenchimento mais confortável sem eliminar nenhuma opção.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/thefenomeno-criacao-jogador.png" alt="Tela de criação do jogador no celular" width="240"><br><sub>Criação do jogador no celular</sub></td>
-    <td align="center"><img src="docs/apps/thefenomeno-carreira.png" alt="Tela da carreira no celular" width="240"><br><sub>Carreira no celular</sub></td>
+    <td align="center"><img src="docs/apps/celular/thefenomeno-criacao-jogador.jpg" alt="Tela de criação do jogador no celular" width="240"><br><sub>Criação do jogador no celular</sub></td>
+    <td align="center"><img src="docs/apps/celular/thefenomeno-tela-horizontal.jpg" alt="TheFenomeno com o celular na horizontal" width="400"><br><sub>Celular na horizontal</sub></td>
+    <td align="center"><img src="docs/apps/laptop/thefenomeno-carreira.png" alt="Tela da carreira no laptop" width="400"><br><sub>Carreira no laptop (referência)</sub></td>
   </tr>
 </table>
 
 </details>
 
-<details>
-<summary><strong>Teste 5: celular x laptop (classificação dos times)</strong></summary>
+<details open>
+<summary><strong>Teste 5: celular x laptop (tabela de classificação)</strong></summary>
 
 <br>
 
-**Observado.** No celular, a tabela mostra uma seleção reduzida de times, que varia conforme a posição do time do jogador: aparecem os primeiros colocados, os últimos e as posições relevantes para a situação atual. No laptop, a tabela mostra os 20 times de uma vez, mas ocupa só uma pequena parte da tela e deixa uma grande área vazia à esquerda, o que passa a impressão de conteúdo deslocado.
+**Observado.** No laptop, a tabela mostra as 20 equipes ao mesmo tempo, o que permite ver a classificação completa sem navegar pela lista. Porém, ela ocupa só uma parte da área disponível e deixa uma grande região vazia à esquerda, o que dá ao conteúdo um aspecto pouco equilibrado. No celular, a exibição é mais compacta: em vez de todas as equipes, a interface mostra cerca de oito, conforme a posição do time controlado. Quando o time está entre os primeiros, a lista prioriza equipes dessa região e também pode mostrar equipes da parte inferior; quando está perto da zona de rebaixamento, a exibição se adapta a essa posição.
 
 | | Celular | Laptop |
 | --- | --- | --- |
-| Quantidade de times | Seleção reduzida e contextual | Os 20 times |
-| Ponto forte | Compacta e fácil de ler em tela pequena | Visão completa da competição |
-| Ponto fraco | Não mostra a classificação completa de uma vez | Uso ruim do espaço horizontal |
+| Quantidade de times | Cerca de 8, conforme a posição do time | Os 20 times |
+| Ponto forte | Compacta e fácil de ler em tela pequena | Visão completa para comparar todos os times |
+| Ponto fraco | Não mostra a classificação completa de imediato | Tabela pouco centralizada e grande espaço vazio |
 
-**Melhorias possíveis.** Centralizar ou reposicionar a tabela no desktop, aproveitar melhor a largura disponível e manter a visão compacta no celular, com acesso fácil a todos os times.
+**Análise.** A interface mobile parece priorizar as informações mais relevantes para a situação atual do jogador, reduzindo o conteúdo exibido ao mesmo tempo, o que facilita a leitura em telas pequenas, embora impeça a visão imediata da classificação completa. No computador, mostrar todas as equipes facilita a comparação geral, mas o espaço poderia ser melhor aproveitado com uma tabela mais centralizada, uma área de conteúdo mais ampla ou uma distribuição visual mais equilibrada. A comparação mostra que adaptar uma interface ao celular não é só diminuir elementos: envolve selecionar e reorganizar as informações conforme o espaço e a tarefa do usuário.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/thefenomeno-classificacao-celular.png" alt="Classificação no celular" width="240"><br><sub>Classificação no celular</sub></td>
-    <td align="center"><img src="docs/apps/thefenomeno-classificacao-laptop.png" alt="Classificação no laptop" width="400"><br><sub>Classificação no laptop</sub></td>
+    <td align="center"><img src="docs/apps/celular/thefenomeno-classificacao-celular.jpg" alt="Classificação no celular" width="240"><br><sub>Classificação no celular</sub></td>
+    <td align="center"><img src="docs/apps/laptop/thefenomeno-classificacao-laptop.png" alt="Classificação no laptop" width="400"><br><sub>Classificação no laptop</sub></td>
   </tr>
 </table>
 
 </details>
-
-#### Conclusão parcial
-
-A carreira é confortável no celular, mas a criação do jogador sofre com o teclado virtual e a quantidade de campos. A classificação mostra duas estratégias de apresentação: reduzida e contextual no celular, completa mas mal distribuída no laptop. Quanto à conectividade, parte do jogo funciona offline e o progresso é recuperado ao reabrir a guia, mas o avanço entre temporadas exige conexão. Adaptar uma interface a dispositivos diferentes envolve mais do que reduzir elementos: envolve contexto de uso, tipo de interação e organização da informação.
 
 ### 3.3 Notion
 
@@ -278,112 +275,138 @@ A carreira é confortável no celular, mas a criação do jogador sofre com o te
 
 | Teste | Resultado observado | Ponto da fundamentação |
 | --- | --- | --- |
-| Offline | Funcionou no aplicativo móvel; não consegui usar offline pelo Chrome | Rede instável ou ausente |
+| Offline | Funcionou no aplicativo móvel; não funcionou da mesma forma no Chrome | Rede instável ou ausente |
 | Segundo plano | A página continuou no mesmo ponto após alternar para o YouTube (no laptop) | Ciclo de vida |
-| Fechar e reabrir a guia | A página foi achada em *Recents* e a frase escrita estava salva | Ciclo de vida e persistência |
-| Sincronização | A edição apareceu no outro dispositivo sem atualizar a página | Rede e continuidade entre dispositivos |
-| Navegação e polegar | [PREENCHER com a observação feita no celular] | UX mobile |
+| Fechar e reabrir a aba | A frase escrita foi recuperada pelo *Recents* | Ciclo de vida e persistência |
+| Sincronização | A edição apareceu no outro dispositivo sem atualizar a página | Continuidade entre dispositivos |
+| Navegação e organização | *Recents* facilitou achar a página; o mesmo conteúdo abriu no app e no Chrome | UX |
+| Permissões | [PREENCHER: o que observei no celular] | Restrições do dispositivo |
 
-<details>
+<details open>
 <summary><strong>Teste 1: funcionamento offline</strong></summary>
 
 <br>
 
-**Procedimento.** Verifiquei o acesso às páginas sem internet no aplicativo móvel e tentei localizar a mesma função no laptop, onde usei o Notion pelo Google Chrome.
+**Procedimento.** No aplicativo móvel, testei o acesso sem conexão. No laptop, usei o Notion pelo Google Chrome e tentei o mesmo.
 
-**Observado.** O acesso offline funcionou no aplicativo móvel. No laptop, pelo navegador, não consegui usar o Notion offline.
+**Observado.** No celular, consegui acessar conteúdos que já estavam disponíveis no aplicativo, mesmo sem estar conectado. No Chrome do laptop, não consegui usar a página offline da mesma forma.
 
-**Análise.** O aplicativo móvel oferece acesso offline a páginas preparadas antes, enquanto a versão acessada pelo Chrome não ofereceu esse modo. **Limite do teste:** como o laptop foi testado pelo navegador, o resultado não permite concluir que o aplicativo desktop instalado também não tenha o recurso.
+**Análise.** O aplicativo móvel permitiu acessar conteúdo sem conexão, e a versão do Chrome não apresentou o mesmo comportamento durante o teste. **Limite do teste:** no laptop usei a versão web, e não o aplicativo desktop instalado. Por isso, não é correto concluir que o Notion não oferece uso offline no computador. Esse recurso depende da versão utilizada e de como o conteúdo foi preparado. Para uma comparação completa, seria preciso testar também o aplicativo desktop e conferir as configurações de acesso offline.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/notion-offline-celular.png" alt="Página do Notion disponível offline no celular" width="240"><br><sub>Página disponível offline no celular</sub></td>
-    <td align="center"><img src="docs/apps/notion-chrome-laptop.png" alt="Notion aberto no Chrome do laptop" width="400"><br><sub>Notion no Chrome do laptop</sub></td>
+    <td align="center"><img src="docs/apps/celular/notion-offline-celular.jpg" alt="Notion offline no celular" width="240"><br><sub>Notion offline no celular</sub></td>
+    <td align="center"><img src="docs/apps/celular/notion-ler-offline.jpg" alt="Leitura de conteúdo offline no celular" width="240"><br><sub>Leitura de conteúdo offline no celular</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/apps/laptop/notion-offline.png" alt="Notion sem conexão no Chrome do laptop" width="400"><br><sub>Notion sem conexão no Chrome</sub></td>
+    <td align="center"><img src="docs/apps/laptop/notion-page-offline.png" alt="Página do Notion sem conexão no Chrome do laptop" width="400"><br><sub>Página sem conexão no Chrome</sub></td>
   </tr>
 </table>
 
+<img src="docs/apps/laptop/notion-chrome-laptop.png" alt="Notion aberto no Chrome do laptop" width="400">
+
+<sub>Notion aberto no Chrome do laptop</sub>
+
 </details>
 
-<details>
+<details open>
 <summary><strong>Teste 2: segundo plano</strong></summary>
 
 <br>
 
-**Procedimento.** Abri uma página do Notion no Chrome do laptop, troquei para o YouTube por alguns minutos e voltei.
+**Procedimento.** No laptop, abri uma página do Notion no Chrome, alternei para o YouTube por alguns minutos e voltei à aba do Notion.
 
-**Observado.** A página estava exatamente onde eu tinha deixado.
+**Observado.** A página continuava no mesmo ponto em que eu a tinha deixado.
 
-**Análise.** A alternância de guias não interrompeu o contexto, o que ajuda quem consulta outras fontes durante o trabalho. **Limite do teste:** avaliei a troca de guias do navegador, e não a suspensão de um aplicativo móvel nem o encerramento completo do navegador.
+**Análise.** A alternância entre sites não fez a página perder o estado visível, o que dá continuidade à experiência: o usuário interrompe uma atividade e a retoma sem procurar o conteúdo de novo. **Limite do teste:** o resultado vale para o Chrome nessa situação. O navegador e o sistema operacional podem gerenciar abas e recursos de outro modo, conforme a memória disponível e o tempo de inatividade.
 
 </details>
 
-<details>
-<summary><strong>Teste 3: persistência após fechar a guia</strong></summary>
+<details open>
+<summary><strong>Teste 3: persistência após fechar a aba</strong></summary>
 
 <br>
 
-**Procedimento.** Escrevi uma frase em uma página, esperei alguns segundos para salvar e fechei a guia. Depois reabri o Notion e procurei a página em *Recents*.
+**Procedimento.** Escrevi uma frase em uma página do Notion, esperei alguns segundos para a alteração ser salva, fechei a aba e abri o Notion de novo. Para achar a página, usei a seção de itens recentes (*Recents*).
 
-**Observado.** A página apareceu em *Recents* e a frase continuava salva.
+**Observado.** A frase que eu tinha escrito estava lá.
 
-**Análise.** A alteração permaneceu disponível após fechar e reabrir a guia, e *Recents* reduziu a necessidade de procurar a página na estrutura do workspace. **Limite do teste:** usei uma página e uma alteração de texto, sem cobrir outros tipos de conteúdo.
+**Análise.** O conteúdo continuou disponível depois de fechar e reabrir a aba, e o *Recents* facilitou voltar à página usada. Isso importa em ferramentas de produtividade, onde o usuário precisa confiar que suas anotações continuarão ali depois de uma interrupção. **Limite do teste:** ele não revela o mecanismo interno de salvamento, apenas confirma que o conteúdo foi recuperado na situação observada.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/notion-recents.png" alt="Seção Recents do Notion" width="320"><br><sub>Seção Recents</sub></td>
-    <td align="center"><img src="docs/apps/notion-pagina-reaberta.png" alt="Página reaberta com a frase salva" width="320"><br><sub>Página reaberta com a frase salva</sub></td>
+    <td align="center"><img src="docs/apps/laptop/notion-recents.png" alt="Seção Recents do Notion" width="400"><br><sub>Seção Recents</sub></td>
   </tr>
 </table>
 
 </details>
 
-<details>
+<details open>
 <summary><strong>Teste 4: sincronização entre dispositivos</strong></summary>
 
 <br>
 
-**Procedimento.** Editei uma página em um dispositivo e conferi no outro, entre o aplicativo móvel e a versão web no Chrome do laptop.
+**Procedimento.** Alterei uma página em um dispositivo e consultei a mesma página no outro, usando o aplicativo móvel e a versão web no Chrome do laptop.
 
 **Observado.** A alteração apareceu no outro dispositivo sem que eu atualizasse a página manualmente.
 
-**Análise.** A sincronização foi automática, o que facilita começar uma tarefa no celular e continuar no laptop. **Limite do teste:** não avaliei conexões instáveis nem edição simultânea do mesmo conteúdo.
+**Análise.** As alterações foram sincronizadas entre as duas versões, o que permite alternar entre celular e laptop sem transferir conteúdo nem repetir modificações. É útil em ferramentas de organização, porque dá para começar uma atividade em um aparelho e continuar em outro. **Limite do teste:** o resultado vale para a alteração testada. Ele não garante sincronização instantânea em qualquer condição, principalmente com problemas de conexão ou edições simultâneas.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/notion-edicao-origem.png" alt="Conteúdo editado no dispositivo de origem" width="320"><br><sub>Edição no dispositivo de origem</sub></td>
-    <td align="center"><img src="docs/apps/notion-sincronizacao-destino.png" alt="Alteração visível no outro dispositivo" width="320"><br><sub>Alteração no outro dispositivo, sem atualizar</sub></td>
+    <td align="center"><img src="docs/apps/celular/notion-edicao-origem.jpg" alt="Edição feita no celular" width="240"><br><sub>Edição feita no celular</sub></td>
+    <td align="center"><img src="docs/apps/laptop/notion-sincronizacao-destino.png" alt="Alteração apareceu no laptop" width="400"><br><sub>Alteração no laptop, sem atualizar</sub></td>
   </tr>
 </table>
 
 </details>
 
-<details>
-<summary><strong>Navegação, edição e zona do polegar</strong></summary>
+<details open>
+<summary><strong>Navegação e organização da interface</strong></summary>
 
 <br>
 
-**Documentação.** Segundo a documentação consultada, o celular é projetado para toque, com teclado virtual e ferramentas de formatação perto da área de escrita, o que favorece consultas rápidas e registros em movimento. O desktop oferece mais espaço, teclado físico e atalhos, o que ajuda em edição longa e na organização de blocos. Essas são características gerais descritas na documentação, não resultados de testes meus.
+**Observado.** A seção *Recents* facilita encontrar páginas acessadas antes, e foi especialmente útil no teste de recuperação depois de fechar a aba. Também foi possível alternar entre o aplicativo móvel e a versão web para abrir a mesma página e conferir as alterações.
 
-**Observado.** [PREENCHER: onde ficam os botões principais do Notion no celular em relação ao polegar, usando o aparelho com uma mão só.]
+**Documentação.** A documentação do Notion descreve diferenças de interface entre dispositivos: no celular, a organização privilegia controles adequados ao toque e ao espaço reduzido; no computador, a interface pode usar uma área maior para mostrar a navegação lateral e mais conteúdo ao mesmo tempo. Essas informações vêm da documentação, e não de testes meus.
+
+**Análise.** Recuperar páginas recentes e acessar o mesmo conteúdo em dispositivos diferentes contribui para a continuidade do trabalho. Numa ferramenta de organização, a navegação precisa permitir que o usuário ache rápido o que procura e retome o que estava fazendo. As diferenças entre celular e computador são adaptações ao contexto de uso, não necessariamente limitações de uma das versões: a avaliação depende da atividade, do dispositivo e do que o usuário precisa.
 
 </details>
 
-#### Conclusão parcial
+<details open>
+<summary><strong>Permissões no celular</strong></summary>
 
-O Notion mostrou continuidade de uso: a página manteve o contexto ao trocar de guia, o conteúdo foi recuperado por *Recents* depois de fechar a guia e a edição sincronizou entre celular e laptop sem atualização manual. O acesso offline funcionou no aplicativo móvel, mas não no Chrome, diferença que deve ser lida considerando que o aplicativo desktop não foi testado.
+<br>
+
+**Observado.** [PREENCHER: qual permissão o app pediu, em que momento pediu e se explicou o motivo.]
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/apps/celular/notion-permissao-celular.jpg" alt="Pedido de permissão do Notion no celular" width="240"><br><sub>Pedido de permissão no celular</sub></td>
+  </tr>
+</table>
+
+</details>
 
 ### 3.4 Comparação entre os aplicativos
 
-| Critério | TheFenomeno | Notion |
+O TheFenomeno e o Notion têm finalidades diferentes, mas os dois mostram a importância de adaptar a experiência a cada plataforma. O TheFenomeno simula uma carreira esportiva, e a análise dele destacou o comportamento sem conexão, a recuperação do progresso, a interação com formulários e a adaptação da tabela de classificação a telas diferentes. O Notion é uma ferramenta de organização e produtividade, e os testes se concentraram em acesso offline, persistência das alterações, recuperação de páginas e sincronização entre o aplicativo móvel e a versão web.
+
+No uso offline, o TheFenomeno deixou continuar a temporada em andamento, mas deu erro ao avançar para a seguinte sem conexão; no Notion, o aplicativo móvel permitiu acessar conteúdo offline, enquanto o Chrome no laptop não repetiu o resultado. Na continuidade de uso, os dois foram bem: no TheFenomeno foi possível trocar de aplicativo e reabrir o jogo sem perder a carreira, e no Notion a página permaneceu no mesmo ponto ao voltar à aba e o conteúdo escrito continuou lá depois de fechar e reabrir.
+
+Na interface, o TheFenomeno reduz a quantidade de equipes na classificação do celular e mostra a tabela completa no computador. No Notion, as interfaces mobile e web oferecem formas de navegação adequadas aos respectivos dispositivos.
+
+| Aspecto analisado | TheFenomeno | Notion |
 | --- | --- | --- |
-| Objetivo | Simular uma carreira de futebol | Organizar informações e conteúdos |
-| Experiência no celular | Carreira confortável; criação do jogador menos confortável | Acesso e edição de páginas pelo aplicativo móvel |
-| Organização da informação | Classificação muda conforme o dispositivo e a posição do time | Páginas organizadas em um workspace |
-| Segundo plano | Carreira continuou após alternar para o YouTube | Página manteve o contexto após alternar para o YouTube |
-| Persistência | Carreira recuperada ao reabrir a guia | Página e alteração recuperadas por *Recents* |
-| Uso offline | Uma temporada funcionou; avançar para a seguinte falhou | Funcionou no aplicativo móvel; não no Chrome |
-| Entre dispositivos | Sincronização não testada | Alteração apareceu no outro dispositivo sem atualizar |
-| Oportunidade de melhoria | Etapas na criação do jogador e melhor uso do espaço no desktop | Manter navegação consistente e facilitar a edição em telas diferentes |
+| Funcionamento offline | A temporada atual continuou, mas avançar para a seguinte exigiu restabelecer a conexão | O app móvel permitiu consultar conteúdo offline; no Chrome não consegui reproduzir |
+| Segundo plano | A carreira continuou disponível após alternar para o YouTube | A página permaneceu no mesmo ponto após alternar para o YouTube |
+| Fechar e reabrir | A carreira continuou disponível | A frase escrita foi recuperada |
+| Sincronização entre dispositivos | Não foi testada | A alteração apareceu no outro dispositivo sem atualização manual |
+| Adaptação da interface | A classificação mostra menos equipes no celular e todas no computador | A navegação e a disposição dos controles variam conforme o dispositivo |
+| Usabilidade | Carreira confortável no celular; criação do jogador exigiu rolagem e foi prejudicada pelo teclado virtual | *Recents* facilitou encontrar a página de novo |
+| Possíveis melhorias | Melhor uso do espaço no computador e formulário de criação do jogador em etapas | Explicar melhor a disponibilidade offline e as diferenças entre versões; testar o app desktop |
 
 #### Cobertura dos pontos da fundamentação
 
@@ -391,18 +414,12 @@ O Notion mostrou continuidade de uso: a página manteve o contexto ao trocar de 
 | --- | --- | --- |
 | Ciclo de vida (segundo plano e persistência) | Testado | Testado |
 | Rede instável ou ausente | Testado | Testado |
-| Entrada e interação (teclado virtual) | Testado | [PREENCHER ou remover] |
-| UX e adaptação de tela | Testado | [PREENCHER] |
+| Entrada e interação (teclado virtual) | Testado | Não testado |
+| UX e adaptação de tela | Testado | Observado e documentação |
+| Permissões e orientação | Orientação: [PREENCHER] | Permissões: [PREENCHER] |
 | Sincronização entre dispositivos | Não testado | Testado |
 
-#### Principais diferenças encontradas
-
-1. **Apresentação dos dados.** O TheFenomeno muda a quantidade de times conforme o ambiente e a posição na tabela; o Notion usa páginas pensadas para organizar e recuperar conteúdo.
-2. **Contexto de uso.** No TheFenomeno a experiência muda conforme a atividade (carreira x criação do jogador); no Notion os testes destacaram a continuidade ao alternar entre aplicações e dispositivos.
-3. **Persistência.** Os dois preservaram informações após interrupções: a carreira no TheFenomeno, a página e a edição no Notion.
-4. **Comportamento offline.** O TheFenomeno manteve parte da simulação sem rede, mas não avançou de temporada; o Notion permitiu acesso offline no aplicativo móvel, não no Chrome.
-5. **Sincronização.** No Notion foi possível ver a propagação de uma edição entre dispositivos. No TheFenomeno isso não foi testado, então não há comparação direta.
-6. **Aproveitamento da tela.** O TheFenomeno deixou uma grande área vazia no laptop e sofreu com o teclado virtual no celular.
+Uma boa experiência multiplataforma não depende só de oferecer o mesmo serviço em dispositivos diferentes. Também é preciso considerar a continuidade das atividades, a preservação dos dados, a organização das informações e a adequação dos controles ao contexto de uso.
 
 ---
 
@@ -539,13 +556,20 @@ THEFENOMENO. **TheFenomeno**. Disponível em: https://www.thefenomeno.com/. Aces
 
 ANTHROPIC. Claude (Claude Sonnet 5.5). Ferramenta de inteligência artificial generativa.
 Data de uso: 16 out. 2026.
-Finalidade: organização visual e estrutura do README (formatação, tabelas, diagramas e roteiro das seções) a partir das minhas anotações dos testes.
+Finalidade: organização visual e estrutura do README (formatação, tabelas, diagramas e roteiro das seções) e revisão de clareza dos meus parágrafos de análise. Os testes, as observações e as conclusões são minhas.
 Arquivos impactados: README.md
 
-ANTHROPIC. ChatGPT. Ferramenta de inteligência artificial generativa.
+ANTHROPIC. Claude (Claude Sonnet 5.5). Ferramenta de inteligência artificial generativa.
 Data de uso: [PREENCHER].
 Finalidade: orientação sobre o planejamento do trabalho e sobre comandos de Git e Expo (criação do projeto, correção do template e do histórico de commits).
 Arquivos impactados: estrutura do repositório e histórico de commits; nenhum texto de conteúdo.
+
+ANTHROPIC. Claude (Claude Sonnet 5.5). Ferramenta de inteligência artificial generativa.
+Data de uso: [PREENCHER].
+Finalidade: pesquisa de informações sobre o TheFenomeno e discussão sobre a escolha dos aplicativos em relação ao enunciado.
+Arquivos impactados: nenhum arquivo.
+
+<!-- Se usou outra ferramenta de IA (por exemplo, no rascunho anterior do README), copie o bloco acima e declare também. Se algum bloco não se aplicar, apague-o. -->
 
 ---
 
