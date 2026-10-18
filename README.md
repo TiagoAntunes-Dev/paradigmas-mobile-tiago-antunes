@@ -82,50 +82,72 @@ Para separar o que eu vi do que eu li, cada afirmação da pesquisa de campo car
 
 ### Metodologia
 
-Os testes foram exploratórios: usei cada aplicativo em dispositivos diferentes, repeti as mesmas situações (alternar de app, fechar e reabrir, ficar sem internet, editar e conferir em outro aparelho) e registrei o que aconteceu, com prints. Quando não foi possível determinar a causa técnica de um comportamento, ela aparece como hipótese, não como fato.
+Os testes foram exploratórios e realizados em dispositivos diferentes, considerando as características e funcionalidades de cada aplicativo. Foram avaliados cenários como funcionamento sem conexão, alternância entre aplicativos, fechamento e reabertura de páginas, usabilidade e adaptação da interface. 
+
+No Notion, também foi realizado um teste de sincronização entre dispositivos. Nem todos os cenários foram aplicados aos dois aplicativos, e os resultados foram registrados por meio de observações e capturas de tela. Quando não foi possível determinar a causa técnica de um comportamento, ela foi tratada como hipótese, e não como fato confirmado.
 
 ---
 
 ## 2. Fundamentação
 
 > [!IMPORTANT]
-> Esta seção precisa ser escrita com as minhas palavras, a partir das fontes listadas na seção 9. Cada subseção deve citar a fonte no texto.
+> Completo com as cinco subseções, citações no corpo do texto e relações com os testes que realizados.
 
 ### 2.1 Ciclo de build e distribuição
 
-<!-- COBRIR: caminho "salvei o código até o usuário ter a nova versão" na web (build, deploy, cache) e no mobile (build, assinatura, envio, revisão Apple/Google, liberação gradual, usuários em versões antigas). Consequências para API, correções urgentes e compatibilidade. -->
+No desenvolvimento web, as alterações costumam ser disponibilizadas por meio de uma nova publicação dos arquivos em um servidor ou serviço de hospedagem. Depois da publicação, o usuário acessa a versão atualizada pelo navegador, embora mecanismos de cache possam fazer com que alguns arquivos antigos continuem sendo utilizados temporariamente.
 
-[PREENCHER]
+No desenvolvimento mobile nativo, o processo geralmente envolve gerar uma compilação instalável, assinar o pacote e distribuí-lo por uma loja de aplicativos ou por um canal de testes. No caso de Android e iOS, os pacotes e procedimentos de distribuição são diferentes, e a publicação pode envolver etapas de análise, testes e liberação controlada (EXPO, 2026).
+
+Essa diferença afeta a manutenção do software. Uma aplicação web pode receber uma nova versão sem exigir que o usuário instale manualmente outro aplicativo, enquanto uma atualização mobile distribuída pela loja pode depender da publicação e da instalação de uma nova versão. Por isso, o desenvolvimento mobile precisa considerar que diferentes usuários podem continuar utilizando versões antigas, especialmente quando o aplicativo depende de uma API que também está sendo modificada.
+
+Assim, a distribuição faz parte da arquitetura do projeto: além de implementar funcionalidades, é necessário planejar como elas serão disponibilizadas e como a compatibilidade será mantida durante as atualizações.
 
 ### 2.2 Ciclo de vida do aplicativo
 
-<!-- COBRIR: estados ativo, segundo plano e encerrado pelo sistema; comparação com aba de navegador e programa de desktop; por que o estado precisa ser salvo. -->
+O ciclo de vida descreve as mudanças pelas quais uma aplicação passa enquanto está sendo utilizada, fica em segundo plano ou deixa de estar ativa. Em aplicações mobile, o usuário pode alternar para outro aplicativo, bloquear o dispositivo ou voltar à tela inicial. O sistema operacional também pode encerrar um processo para liberar memória. No React Native, por exemplo, o módulo `AppState` permite identificar estados como `active` e `background` e acompanhar mudanças de estado (REACT NATIVE, 2026).
 
-[PREENCHER]
+No navegador, alternar entre abas não é necessariamente a mesma situação que suspender um aplicativo nativo. A página pode continuar aberta, mas fechar a aba encerra aquela instância da página. Por isso, informações importantes não devem depender somente do estado mantido temporariamente na memória.
+
+É necessário distinguir o estado visual de uma tela da persistência dos dados. O primeiro diz respeito a elementos como a página atual, os campos preenchidos e a posição de rolagem; a segunda garante que informações importantes continuem disponíveis após uma interrupção ou reabertura.
+
+Essa diferença se relaciona aos testes realizados: no TheFenomeno, a carreira continuou disponível após alternar de aplicativo e fechar a aba; no Notion, a página permaneceu acessível e a frase escrita foi recuperada depois que a aba foi reaberta. Esses resultados mostram a importância da continuidade da experiência, embora não revelem, por si só, os mecanismos internos de armazenamento utilizados por cada serviço.
 
 > Na pesquisa de campo, testei esse tema na prática: ver as seções [3.2](#32-thefenomeno) e [3.3](#33-notion) (testes de segundo plano e de persistência).
 
 ### 2.3 Restrições do dispositivo
 
-<!-- COBRIR: bateria, memória, rede instável ou ausente, tamanho e densidade de tela, orientação, notch e safe area, permissões (câmera, localização, notificações). -->
+O desenvolvimento mobile precisa considerar as limitações e características do dispositivo em que a aplicação será executada. Entre elas estão a memória disponível, o consumo de bateria, a qualidade da conexão, o tamanho da tela, a densidade de pixels, a orientação do aparelho e o espaço ocupado por elementos do próprio sistema, como áreas reservadas ao recorte da câmera e à navegação.
 
-[PREENCHER]
+Essas condições afetam tanto o funcionamento quanto a apresentação da interface. Uma conexão instável pode impedir operações que dependem de um servidor; uma tela menor pode exigir a reorganização de listas e formulários; e o teclado virtual pode reduzir o espaço disponível durante o preenchimento de campos. Também é necessário considerar as permissões para recursos como câmera, localização e notificações, solicitando acesso quando ele for necessário à funcionalidade.
+
+Os testes realizados ilustram algumas dessas situações. No TheFenomeno, foi possível continuar simulando a temporada atual sem conexão, mas não avançar para a seguinte até restabelecer a internet. Na criação de jogador, o teclado virtual e a quantidade de campos dificultaram o preenchimento. Já a tabela de classificação apresenta menos equipes simultaneamente no celular do que no laptop.
+
+Esses exemplos demonstram que o projeto mobile deve considerar o contexto real de uso, em vez de apenas reproduzir o layout de uma tela maior em um espaço menor.
 
 > Na pesquisa de campo, testei o comportamento sem rede nos dois aplicativos (testes offline das seções 3.2 e 3.3).
 
 ### 2.4 Entrada e interação
 
-<!-- COBRIR: toque x mouse e teclado, tamanho mínimo da área de toque (com números e fonte: HIG e Material Design), gestos, teclado virtual cobrindo a tela. -->
+A interação na web tradicional pode utilizar mouse e teclado físico, enquanto em dispositivos móveis a principal forma de entrada costuma ser o toque, acompanhado de gestos e do teclado virtual. Essa diferença afeta o tamanho dos controles, a distância entre elementos interativos, o posicionamento dos formulários e a forma como o usuário recebe retorno de suas ações.
 
-[PREENCHER]
+Os controles precisam ter áreas de toque adequadas para que sejam acionados com facilidade. As diretrizes da Apple recomendam, como regra geral, uma área de interação de pelo menos 44 × 44 pontos para botões; as orientações de acessibilidade do Android recomendam alvos de toque de pelo menos 48 × 48 dp (APPLE, 2026; ANDROID DEVELOPERS, 2026).
+
+Os formulários merecem atenção especial. Quando o teclado virtual aparece, ele ocupa parte da tela e pode esconder campos ou botões. No React Native, componentes como `KeyboardAvoidingView` ajudam a ajustar a posição ou o espaçamento do conteúdo conforme a presença do teclado (REACT NATIVE, 2026).
+
+Essa questão apareceu no teste do TheFenomeno: a criação de jogador exige diversas informações e rolagem, enquanto o teclado dificulta a visualização dos campos. A observação mostra que a usabilidade mobile não depende apenas de deixar os elementos menores; ela também exige adaptar a interação à forma como o usuário toca e digita no dispositivo.
 
 > Na pesquisa de campo, a criação do jogador no TheFenomeno mostrou o efeito do teclado virtual (teste de usabilidade da seção 3.2).
 
 ### 2.5 UX mobile
 
-<!-- COBRIR: contexto de uso (em pé, uma mão, com pressa), zona do polegar, padrões de navegação mobile (tab bar, drawer, stack). -->
+A experiência do usuário em dispositivos móveis deve considerar o contexto em que o aparelho é utilizado. A tela costuma oferecer menos espaço do que um monitor, os controles são acionados por toque e o usuário pode estar em movimento, utilizando apenas uma das mãos ou alternando rapidamente entre aplicativos. Por isso, é importante priorizar as informações principais, evitar controles difíceis de alcançar e organizar a navegação de forma clara.
 
-[PREENCHER]
+Adaptar a experiência não significa apenas reduzir o tamanho dos elementos da versão web. Dependendo da tarefa, pode ser necessário reorganizar o conteúdo, oferecer menus apropriados a telas menores e mostrar primeiro as informações mais relevantes. Em telas maiores, é possível aproveitar melhor o espaço e apresentar mais informações simultaneamente.
+
+O teste do TheFenomeno demonstrou essa diferença na tabela de classificação: no laptop, as 20 equipes são exibidas de uma vez, mas sobra uma grande área vazia à esquerda. No celular, a lista mostra aproximadamente oito equipes e considera a posição do time controlado. A versão móvel facilita a leitura de uma quantidade menor de informações, embora não apresente a classificação completa ao mesmo tempo.
+
+Assim, uma boa experiência mobile depende de entender a tarefa e o contexto de uso para escolher como organizar os elementos. A solução adequada não precisa ser idêntica à versão web, desde que preserve as funcionalidades importantes e facilite a realização das ações do usuário.
 
 ---
 
@@ -135,11 +157,11 @@ Os testes foram exploratórios: usei cada aplicativo em dispositivos diferentes,
 
 | Item | Celular | Laptop |
 | --- | --- | --- |
-| Aparelho e sistema | [PREENCHER] | [PREENCHER] |
+| Aparelho e sistema | Samsung Galaxy Note10+ | Dell Latitude 5480 — Windows 10 |
 | Navegador | Navegador do celular (Chrome) | Google Chrome |
 | TheFenomeno | Acessado pelo navegador | Acessado pelo navegador |
 | Notion | Aplicativo móvel | Versão web, acessada pelo Chrome |
-| Conectividade | Modo avião ativado nos testes offline | Não aplicável |
+| Conectividade | Modo avião ativado nos testes offline | Conexão foi interrompida, por exemplo, Wi-Fi desativado |
 
 > [!NOTE]
 > No laptop, o Notion foi testado **pelo navegador**, e não pelo aplicativo desktop instalado. Os resultados abaixo valem para o que foi de fato testado e não devem ser atribuídos ao aplicativo desktop.
@@ -160,7 +182,7 @@ Os testes foram exploratórios: usei cada aplicativo em dispositivos diferentes,
 | Segundo plano | A carreira continuou após alternar para o YouTube | Ciclo de vida |
 | Fechar e reabrir a aba | A carreira foi recuperada | Ciclo de vida e persistência |
 | Usabilidade no celular | Carreira confortável; criação do jogador prejudicada por rolagem e teclado virtual | Entrada e interação |
-| Orientação da tela | [PREENCHER: o que observei na tela horizontal] | Restrições do dispositivo |
+| Orientação da tela | A orientação vertical foi mais confortável para acompanhar a carreira; a horizontal foi registrada para comparação visual, sem avaliação sistemática completa. | Restrições do dispositivo |
 | Celular x laptop | A classificação aparece reduzida no celular e completa (20 times) no laptop | UX e adaptação de tela |
 
 <details open>
@@ -186,7 +208,7 @@ flowchart TD
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/laptop/thefenomeno-offline-temporada.png" alt="TheFenomeno com a temporada funcionando sem conexão" width="400"><br><sub>Temporada funcionando sem conexão</sub></td>
+    <td align="center"><img src="docs/web/thefenomeno-offline-temporada.png" alt="TheFenomeno com a temporada funcionando sem conexão" width="400"><br><sub>Temporada funcionando sem conexão</sub></td>
   </tr>
 </table>
 
@@ -225,15 +247,15 @@ flowchart TD
 
 **Observado.** No celular, a tela da carreira ofereceu uma experiência relativamente confortável na orientação vertical: as ações para acompanhar a carreira são acessíveis e a navegação é adequada ao uso móvel. A criação do jogador foi menos confortável. O formulário pede várias informações (nome, nacionalidade, número, posição e opções do modo de jogo), e por isso é preciso percorrer boa parte da tela. O teclado virtual também atrapalha, porque ocupa parte do espaço e pode dificultar a visualização dos campos durante o preenchimento.
 
-**Orientação da tela.** [PREENCHER: o que observei com o celular na horizontal.]
+**Orientação da tela.** A orientação vertical foi a mais confortável durante o uso da carreira. Ao utilizar o celular na horizontal, a área disponível ficou mais larga e menos alta. A captura da tela horizontal complementa a comparação visual entre as orientações, mas não realizei uma avaliação sistemática de todos os componentes para determinar qual organização oferece melhor usabilidade em cada situação.
 
 **Análise.** A quantidade de configurações se justifica pela complexidade de criar um jogador, mas a experiência poderia melhorar com um melhor gerenciamento do teclado, campos organizados em etapas e o campo selecionado aparecendo automaticamente na área visível. Isso reduziria a rolagem e deixaria o preenchimento mais confortável sem eliminar nenhuma opção.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/celular/thefenomeno-criacao-jogador.jpg" alt="Tela de criação do jogador no celular" width="240"><br><sub>Criação do jogador no celular</sub></td>
-    <td align="center"><img src="docs/apps/celular/thefenomeno-tela-horizontal.jpg" alt="TheFenomeno com o celular na horizontal" width="400"><br><sub>Celular na horizontal</sub></td>
-    <td align="center"><img src="docs/apps/laptop/thefenomeno-carreira.png" alt="Tela da carreira no laptop" width="400"><br><sub>Carreira no laptop (referência)</sub></td>
+    <td align="center"><img src="docs/apps/thefenomeno-criacao-jogador.jpg" alt="Tela de criação do jogador no celular" width="240"><br><sub>Criação do jogador no celular</sub></td>
+    <td align="center"><img src="docs/apps/thefenomeno-tela-horizontal.jpg" alt="TheFenomeno com o celular na horizontal" width="400"><br><sub>Celular na horizontal</sub></td>
+    <td align="center"><img src="docs/web/thefenomeno-carreira.png" alt="Tela da carreira no laptop" width="400"><br><sub>Carreira no laptop (referência)</sub></td>
   </tr>
 </table>
 
@@ -256,8 +278,8 @@ flowchart TD
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/celular/thefenomeno-classificacao-celular.jpg" alt="Classificação no celular" width="240"><br><sub>Classificação no celular</sub></td>
-    <td align="center"><img src="docs/apps/laptop/thefenomeno-classificacao-laptop.png" alt="Classificação no laptop" width="400"><br><sub>Classificação no laptop</sub></td>
+    <td align="center"><img src="docs/apps/thefenomeno-classificacao-celular.jpg" alt="Classificação no celular" width="240"><br><sub>Classificação no celular</sub></td>
+    <td align="center"><img src="docs/web/thefenomeno-classificacao-laptop.png" alt="Classificação no laptop" width="400"><br><sub>Classificação no laptop</sub></td>
   </tr>
 </table>
 
@@ -280,7 +302,7 @@ flowchart TD
 | Fechar e reabrir a aba | A frase escrita foi recuperada pelo *Recents* | Ciclo de vida e persistência |
 | Sincronização | A edição apareceu no outro dispositivo sem atualizar a página | Continuidade entre dispositivos |
 | Navegação e organização | *Recents* facilitou achar a página; o mesmo conteúdo abriu no app e no Chrome | UX |
-| Permissões | [PREENCHER: o que observei no celular] | Restrições do dispositivo |
+| Permissões | Não fiz um teste específico de permissões | Restrições do dispositivo |
 
 <details open>
 <summary><strong>Teste 1: funcionamento offline</strong></summary>
@@ -295,16 +317,16 @@ flowchart TD
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/celular/notion-offline-celular.jpg" alt="Notion offline no celular" width="240"><br><sub>Notion offline no celular</sub></td>
-    <td align="center"><img src="docs/apps/celular/notion-ler-offline.jpg" alt="Leitura de conteúdo offline no celular" width="240"><br><sub>Leitura de conteúdo offline no celular</sub></td>
+    <td align="center"><img src="docs/apps/notion-offline-celular.jpg" alt="Notion offline no celular" width="240"><br><sub>Notion offline no celular</sub></td>
+    <td align="center"><img src="docs/apps/notion-ler-offline.jpg" alt="Leitura de conteúdo offline no celular" width="240"><br><sub>Leitura de conteúdo offline no celular</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/apps/laptop/notion-offline.png" alt="Notion sem conexão no Chrome do laptop" width="400"><br><sub>Notion sem conexão no Chrome</sub></td>
-    <td align="center"><img src="docs/apps/laptop/notion-page-offline.png" alt="Página do Notion sem conexão no Chrome do laptop" width="400"><br><sub>Página sem conexão no Chrome</sub></td>
+    <td align="center"><img src="docs/web/notion-offline.png" alt="Notion sem conexão no Chrome do laptop" width="400"><br><sub>Notion sem conexão no Chrome</sub></td>
+    <td align="center"><img src="docs/web/notion-page-offline.png" alt="Página do Notion sem conexão no Chrome do laptop" width="400"><br><sub>Página sem conexão no Chrome</sub></td>
   </tr>
 </table>
 
-<img src="docs/apps/laptop/notion-chrome-laptop.png" alt="Notion aberto no Chrome do laptop" width="400">
+<img src="docs/web/notion-chrome-laptop.png" alt="Notion aberto no Chrome do laptop" width="400">
 
 <sub>Notion aberto no Chrome do laptop</sub>
 
@@ -336,7 +358,7 @@ flowchart TD
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/laptop/notion-recents.png" alt="Seção Recents do Notion" width="400"><br><sub>Seção Recents</sub></td>
+    <td align="center"><img src="docs/web/notion-recents.png" alt="Seção Recents do Notion" width="400"><br><sub>Seção Recents</sub></td>
   </tr>
 </table>
 
@@ -355,8 +377,8 @@ flowchart TD
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/celular/notion-edicao-origem.jpg" alt="Edição feita no celular" width="240"><br><sub>Edição feita no celular</sub></td>
-    <td align="center"><img src="docs/apps/laptop/notion-sincronizacao-destino.png" alt="Alteração apareceu no laptop" width="400"><br><sub>Alteração no laptop, sem atualizar</sub></td>
+    <td align="center"><img src="docs/apps/notion-edicao-origem.jpg" alt="Edição feita no celular" width="240"><br><sub>Edição feita no celular</sub></td>
+    <td align="center"><img src="docs/web/notion-sincronizacao-destino.png" alt="Alteração apareceu no laptop" width="400"><br><sub>Alteração no laptop, sem atualizar</sub></td>
   </tr>
 </table>
 
@@ -384,7 +406,7 @@ flowchart TD
 
 <table>
   <tr>
-    <td align="center"><img src="docs/apps/celular/notion-permissao-celular.jpg" alt="Pedido de permissão do Notion no celular" width="240"><br><sub>Pedido de permissão no celular</sub></td>
+    <td align="center"><img src="docs/apps/notion-permissao-celular.jpg" alt="Pedido de permissão do Notion no celular" width="240"><br><sub>Pedido de permissão no celular</sub></td>
   </tr>
 </table>
 
@@ -416,7 +438,7 @@ Na interface, o TheFenomeno reduz a quantidade de equipes na classificação do 
 | Rede instável ou ausente | Testado | Testado |
 | Entrada e interação (teclado virtual) | Testado | Não testado |
 | UX e adaptação de tela | Testado | Observado e documentação |
-| Permissões e orientação | Orientação: [PREENCHER] | Permissões: [PREENCHER] |
+| Permissões e orientação | Orientação: Testado | Permissões: Não testado |
 | Sincronização entre dispositivos | Não testado | Testado |
 
 Uma boa experiência multiplataforma não depende só de oferecer o mesmo serviço em dispositivos diferentes. Também é preciso considerar a continuidade das atividades, a preservação dos dados, a organização das informações e a adequação dos controles ao contexto de uso.
@@ -540,15 +562,26 @@ Tipos de commit usados neste projeto:
 
 ESCUDELARIO, B.; PINHO, D. **React Native**: desenvolvimento de aplicativos mobile com React. São Paulo: Casa do Código, 2021.
 
-APPLE. **Human Interface Guidelines**. Disponível em: https://developer.apple.com/design/human-interface-guidelines. Acesso em: [PREENCHER].
+APPLE. **Human Interface Guidelines**. Apple Developer Documentation. Disponível em: https://developer.apple.com/design/human-interface-guidelines/. Acesso em: 18 out. 2026.
 
-GOOGLE. **Material Design 3**. Disponível em: https://m3.material.io. Acesso em: [PREENCHER].
+GOOGLE. **Material Design 3**. Disponível em: https://m3.material.io/. Acesso em: 18 out. 2026.
 
-REACT NATIVE. **Documentação oficial**. Disponível em: https://reactnative.dev/docs/getting-started. Acesso em: [PREENCHER].
+NOTION. **Help Center**. Disponível em: https://www.notion.com/help. Acesso em: 18 out. 2026.
 
-NOTION. **Notion Help Center**. Disponível em: https://www.notion.com/help. Acesso em: [PREENCHER].
+REACT NATIVE. **Introduction**. React Native Documentation. Disponível em: https://reactnative.dev/docs/getting-started. Acesso em: 18 out. 2026.
 
-THEFENOMENO. **TheFenomeno**. Disponível em: https://www.thefenomeno.com/. Acesso em: [PREENCHER].
+THE FENÔMENO. **The Fenômeno — Simulador de Carreira no Futebol**. Disponível em: https://www.thefenomeno.com/. Acesso em: 18 out. 2026.
+
+ANDROID DEVELOPERS. **Acessibilidade**. Disponível em: https://developer.android.com/design/ui/mobile/guides/foundations/accessibility?hl=pt-br. Acesso em: 18 out. 2026.
+
+EXPO. **Submit to app stores**. Expo Documentation. Disponível em: https://docs.expo.dev/deploy/submit-to-app-stores/. Acesso em: 18 out. 2026.
+
+REACT NATIVE. **AppState**. React Native Documentation. Disponível em: https://reactnative.dev/docs/appstate. Acesso em: 18 out. 2026.
+
+REACT NATIVE. **KeyboardAvoidingView**. React Native Documentation. Disponível em: https://reactnative.dev/docs/keyboardavoidingview. Acesso em: 18 out. 2026.
+
+NOTION. **Usar páginas offline**. Central de ajuda do Notion. Disponível em: https://www.notion.com/pt/help/use-pages-offline. Acesso em: 18 out. 2026.
+
 
 ---
 
