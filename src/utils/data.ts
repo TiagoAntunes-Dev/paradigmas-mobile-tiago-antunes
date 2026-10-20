@@ -6,7 +6,6 @@ const PAGES = [
   { id: "5", title: "Node.js" },
   { id: "6", title: "Expo Router" },
   { id: "7", title: "Youtube" },
-  { id: "8", title: "Projetos" },
 ]
 
 const RECENT = [
