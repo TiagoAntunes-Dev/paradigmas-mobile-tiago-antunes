@@ -11,10 +11,10 @@ export default function RootLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarInactiveTintColor: colors.gray[400],
-        tabBarActiveTintColor: colors.red[300],
+        tabBarActiveTintColor: colors.gray[100],
         tabBarStyle: {
-          backgroundColor: colors.white,
-          borderTopColor: colors.white,
+          backgroundColor: colors.gray[800],
+          borderTopColor: colors.gray[600],
         },
         sceneStyle: {
           backgroundColor: colors.gray[800],
@@ -45,10 +45,6 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Feather name="inbox" color={color} size={size} />
           ),
-          tabBarBadge: 3,
-          tabBarBadgeStyle: {
-            backgroundColor: colors.red[300]
-          }
         }}
       />
 

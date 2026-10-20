@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, FlatList } from "react-native";
+import type { ImageSourcePropType } from "react-native";
 
 import { s } from "./styles"
 import Recent from "@/components/recent"
@@ -8,7 +9,7 @@ type Props = {
   data: {
     id: string,
     title: string
-    cover?: string
+    cover?: ImageSourcePropType
   }[]
 }
 

@@ -1,0 +1,131 @@
+import { colors } from "@/styles/colors";
+import { StyleSheet } from "react-native";
+
+export const s = StyleSheet.create({
+  container: {
+    marginTop: 30,
+    flex: 1,
+    backgroundColor: colors.gray[800],
+    paddingTop: 38,
+  },
+  header: {
+    minHeight: 52,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.gray[600],
+  },
+  headerTitle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  heading: {
+    color: colors.gray[100],
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  headerAction: {
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 8,
+    backgroundColor: colors.gray[700],
+  },
+  content: {
+    paddingHorizontal: 24,
+    paddingTop: 30,
+    paddingBottom: 24,
+  },
+  titleInput: {
+    color: colors.gray[100],
+    fontSize: 30,
+    fontWeight: "700",
+    paddingVertical: 8,
+  },
+  bodyInput: {
+    minHeight: 120,
+    color: colors.gray[100],
+    fontSize: 16,
+    lineHeight: 24,
+    paddingTop: 10,
+  },
+  templateSection: {
+    marginTop: 18,
+    gap: 8,
+  },
+  sectionTitle: {
+    color: colors.gray[300],
+    fontSize: 13,
+    fontWeight: "600",
+    marginBottom: 4,
+  },
+  templateRow: {
+    minHeight: 52,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  templateSelected: {
+    backgroundColor: colors.gray[700],
+    borderColor: colors.gray[500],
+  },
+  templateIcon: {
+    width: 32,
+    height: 32,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 7,
+    backgroundColor: colors.gray[600],
+  },
+  templateTitle: {
+    flex: 1,
+    color: colors.gray[100],
+    fontSize: 14,
+  },
+  successMessage: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 9,
+    marginTop: 18,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: colors.gray[700],
+  },
+  successText: {
+    flex: 1,
+    color: colors.gray[100],
+    fontSize: 13,
+  },
+  footer: {
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 14,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.gray[600],
+  },
+  createButton: {
+    minHeight: 48,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 8,
+    backgroundColor: colors.gray[100],
+  },
+  createButtonDisabled: {
+    opacity: 0.45,
+  },
+  createButtonText: {
+    color: colors.gray[800],
+    fontSize: 15,
+    fontWeight: "600",
+  },
+});
