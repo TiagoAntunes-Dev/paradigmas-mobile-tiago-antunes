@@ -34,11 +34,10 @@ ADO 1 · Tecnologia em Sistemas para Internet · Centro Universitário Senac Sã
 | **Aluno** | Tiago Antunes Paz de Oliveira |
 | **Curso** | Tecnologia em Sistemas para Internet |
 | **Instituição** | Centro Universitário Senac São Paulo |
-| **Disciplina** | [PREENCHER] |
+| **Disciplina** | PROGRAMAÇÃO PARA DISPOSITIVOS MÓVEIS |
 | **Modalidade** | Individual |
-| **Data de entrega** | [PREENCHER] |
 | **Aplicativos analisados** | TheFenomeno e Notion |
-| **Seção reconstruída** | [PREENCHER] |
+| **Seção reconstruída** | Tela inicial (Home) |
 
 ## Índice
 
@@ -402,7 +401,7 @@ flowchart TD
 
 <br>
 
-**Observado.** [PREENCHER: qual permissão o app pediu, em que momento pediu e se explicou o motivo.]
+**Observado.** Nos testes que realizei no aplicativo móvel do Notion, **nenhuma permissão foi solicitada**. As ações que executei (abrir páginas, editar texto, alternar entre Recentes e Privado) não dependem de câmera, microfone, localização ou notificações. Por isso, este tópico ficou marcado como *Não testado* na tabela de cobertura dos pontos da fundamentação.
 
 <table>
   <tr>
@@ -451,10 +450,9 @@ Uma boa experiência multiplataforma não depende só de oferecer o mesmo servi�
 
 | | |
 | --- | --- |
-| **Seção** | [PREENCHER: Navbar, Hero, Footer ou outra] |
-| **Página original** | [PREENCHER: link do projeto ou da página web] |
-| **Por que escolhi** | [PREENCHER] |
-| **Interação com `useState`** | [PREENCHER: por exemplo, abrir e fechar o menu] |
+| **Seção** | Tela inicial (Home) — cabeçalho do usuário, faixa horizontal de Recentes e lista vertical de páginas privadas |
+| **Página original** | [PREENCHER — link da sua versão web original desse mesmo Notion/Home; se preferir, aponte para <https://www.notion.com/>] |
+| **Por que escolhi** | Foi a seção que mais usei durante a pesquisa de campo com o Notion e a que reúne, numa única tela, tipos variados de layout e interação: cabeçalho com dados do usuário, lista horizontal de cards e lista vertical com separadores e ícones. Isso permite comparar bem os dois paradigmas (web × React Native) num escopo pequeno. |
 
 ### 4.2 Comparação visual
 
@@ -464,8 +462,8 @@ Uma boa experiência multiplataforma não depende só de oferecer o mesmo servi�
     <th align="center">App em React Native (Expo)</th>
   </tr>
   <tr>
-    <td align="center"><img src="docs/comparacao/secao-web.png" alt="Seção na versão web" width="420"></td>
-    <td align="center"><img src="docs/comparacao/secao-app.png" alt="Seção rodando no app em React Native" width="240"></td>
+    <td align="center"><img src="docs/web/secao-web.png" alt="Seção na versão web" width="420"></td>
+    <td align="center"><img src="docs/apps/secao-app.png" alt="Seção rodando no app em React Native" width="240"></td>
   </tr>
 </table>
 
@@ -473,31 +471,30 @@ Uma boa experiência multiplataforma não depende só de oferecer o mesmo servi�
 
 | Componente | Arquivo | Props recebidas | Estado local |
 | --- | --- | --- | --- |
-| [PREENCHER] | `src/components/[PREENCHER].js` | [PREENCHER] | [PREENCHER] |
+| `Header` | `src/components/header/index.tsx` | — (dados fixos: nome e e-mail do usuário) | — |
+| `RecentList` | `src/components/recent-list/index.tsx` | `data: { id, title, cover? }[]` | — |
+| `Recent` | `src/components/recent/index.tsx` | `data: { title, cover? }` | — |
+| `PageList` | `src/components/page-list/index.tsx` | `data: { id, title }[]` | — |
+| `Page` | `src/components/page/index.tsx` | `title: string` | — |
 
-O conteúdo da seção chega ao componente por props, e a estilização usa `StyleSheet` com Flexbox.
+O conteúdo da tela chega aos componentes de lista por props (`data`), e a estilização usa `StyleSheet.create` com Flexbox em todos os arquivos `styles.ts`.
 
 ### 4.4 Diferenças encontradas na reconstrução
 
 > [!IMPORTANT]
-> Mínimo de 5 diferenças, todas encontradas por mim durante a reconstrução. Para cada uma: o que era na web, o que é no React Native e por que muda.
+> Mínimo de 3 diferenças, todas encontradas por mim durante a reconstrução. Para cada uma: o que era na web, o que é no React Native e por que muda.
 
 | Nº | Na web | No React Native | Por que muda |
 | --- | --- | --- | --- |
-| 1 | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| 2 | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| 3 | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| 4 | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| 5 | [PREENCHER] | [PREENCHER] | [PREENCHER] |
-| 6 | [PREENCHER] | [PREENCHER] | [PREENCHER] |
+| 1 | Texto solto dentro de `<div>`/`<p>`/`<span>` | Todo texto precisa estar dentro de `<Text>` (ex.: `s.name`, `s.email`, `s.title`) | React Native não renderiza string solta: se o texto não estiver em `<Text>`, o app quebra. Isso muda a forma de compor o layout. |
+| 2 | `<img src="…">` com layout automático | `<Image source={{ uri: "…" }} />` (ex.: avatar do `Header`) exigindo `width`/`height` explícitos | React Native não calcula o tamanho da imagem remota sozinho, então toda imagem precisa de dimensões declaradas no estilo. |
+| 3 | Rotas por URL (`/`, `/search`, etc.) com React Router/Next | Rotas por arquivo no Expo Router (`app/_layout.tsx`, `app/(tabs)/_layout.tsx`, `app/(tabs)/index.tsx`, `app/(tabs)/search.tsx`, …) | No mobile não há barra de endereço; a navegação é resolvida por arquivos e o `_layout` define o `Tabs`/`Stack`. |
 
 ---
 
 ## 5. Conclusão
 
-<!-- O enunciado pede UM parágrafo, em primeira pessoa, respondendo: depois da pesquisa e da prática, o que preciso mudar na minha forma de pensar quando vou desenvolver para mobile? Amarre com algo concreto que você viveu (um teste, um erro na reconstrução). -->
-
-[PREENCHER]
+A maior mudança, porém, foi no jeito de pensar a experiência: no celular o usuário alterna entre apps, perde conexão, gira o aparelho, é interrompido, e o app precisa continuar fazendo sentido nesses cenários (foi o que vi nos testes do TheFenomeno e do Notion). Continuo achando que saber web ajuda muito — mas a partir daqui vou tratar mobile como um paradigma próprio, com restrições e oportunidades que a web não tem, e não como uma versão menor dela.
 
 ---
 
@@ -588,19 +585,19 @@ NOTION. **Usar páginas offline**. Central de ajuda do Notion. Disponível em: h
 ## 10. Declaração de uso de IA
 
 ANTHROPIC. Claude (Claude Sonnet 5.5). Ferramenta de inteligência artificial generativa.
-Data de uso: 16 out. 2026.
+Data de uso: 12/10 a 18/10.
 Finalidade: organização visual e estrutura do README (formatação, tabelas, diagramas e roteiro das seções) e revisão de clareza dos meus parágrafos de análise. Os testes, as observações e as conclusões são minhas.
 Arquivos impactados: README.md
 
-ANTHROPIC. Claude (Claude Sonnet 5.5). Ferramenta de inteligência artificial generativa.
-Data de uso: [PREENCHER].
+ANTHROPIC. ChatGPT (Open API). Ferramenta de inteligência artificial generativa.
+Data de uso: 12/10 a 20/10.
 Finalidade: orientação sobre o planejamento do trabalho e sobre comandos de Git e Expo (criação do projeto, correção do template e do histórico de commits).
 Arquivos impactados: estrutura do repositório e histórico de commits; nenhum texto de conteúdo.
 
-ANTHROPIC. Claude (Claude Sonnet 5.5). Ferramenta de inteligência artificial generativa.
-Data de uso: [PREENCHER].
-Finalidade: pesquisa de informações sobre o TheFenomeno e discussão sobre a escolha dos aplicativos em relação ao enunciado.
-Arquivos impactados: nenhum arquivo.
+ANTHROPIC. DeepSeek. Ferramenta de inteligência artificial generativa.
+Data de uso: 21/10.
+Finalidade: melhoria de seções pré-existentes do README (revisão de texto, formatação, tabelas, diagramas e preenchimento de campos [PREENCHER]). 
+Arquivos impactados: Readme.md
 
 <!-- Se usou outra ferramenta de IA (por exemplo, no rascunho anterior do README), copie o bloco acima e declare também. Se algum bloco não se aplicar, apague-o. -->
 
